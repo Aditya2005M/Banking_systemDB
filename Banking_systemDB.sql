@@ -150,7 +150,7 @@ VALUES (1,'Mumbai Main Branch','Andheri East, Mumbai','0220100201'),
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-INSERT INTO ACCOUNTS VALUES
+INSERT INTO ACCOUNT VALUES
 (1001,'Savings',25000,101,1),
 (1002,'Current',85000.50,102,2),
 (1003,'Savings',12500.75,103,1),
@@ -194,10 +194,29 @@ SELECT *
 FROM BRANCHES;
 
 SELECT * 
-FROM ACCOUNTS;
+FROM ACCOUNT;
 
 SELECT * 
 FROM TRANSACTIONS;
 
 SELECT * 
 FROM LOANS;
+
+use Banking_systemDB;
+select * 
+from account;
+
+update customers
+set phone = "4345667890"
+where customerid = 103;
+
+delete from transactions
+where transactionid = 5008;
+
+update account
+set balance = 35750
+where accountid = 1007;
+
+update transactions
+set accountid = 1003
+where transactionid in (5006,5007);
