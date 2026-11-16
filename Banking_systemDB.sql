@@ -220,3 +220,68 @@ where accountid = 1007;
 update transactions
 set accountid = 1003
 where transactionid in (5006,5007);
+
+use banking_system;
+
+select firstname,email,customerid
+from customers;
+
+select *
+from customers
+where customerid = 105 ;
+
+select * 
+from customers
+where customerid = 105 or customerid = 104;
+
+select *
+from customers
+where birthdate >= '1995-01-01' and birthdate <= '2000-12-31';
+
+-- HOW MANY CUSTOMERS ARE THERE IN DATA?
+select count(*) as total_customers
+from customers;
+
+-- WHICH CUSTOMERS HAVE MISSING INFORMATION?
+SELECT *
+FROM CUSTOMERS;
+SELECT CUSTOMERID,FIRSTNAME AS NAME
+FROM CUSTOMERS
+WHERE LASTNAME IS NULL OR EMAIL IS NULL OR PHONE IS NULL;
+
+-- WHO IS YOUNGEST AND OLDEST?
+SELECT min(BIRTHDATE) AS OLDEST,max(BIRTHDATE) AS YOUNGEST FROM CUSTOMERS;
+
+-- HOW MANY CUSTOMERS WHERE BORN BEFORE/AFTER DURATION ?
+-- BEFORE 2000
+select *
+from customers
+where year(BIRTHDATE) <= 2000;
+
+-- HOW MANY CUSTOMERS HAVE MULTIPLE ACCOUNTS?
+SELECT CUSTOMERID, count(*) AS TOTAL_ACCOUNTS
+FROM ACCOUNT
+group by CUSTOMERID
+HAVING TOTAL_ACCOUNTS > 1;
+
+-- HOW MANY SAVINGS,CURRENT AND SALARY ACCOUNTS
+SELECT ACCOUNTTYPE, count(*) AS TOTAL_ACCOUNTS
+FROM ACCOUNT
+group by ACCOUNTTYPE;
+
+-- WHAT IS TOTAL BALANCE?
+ SELECT sum(BALANCE) AS TOTAL_BALANCE  FROM ACCOUNT;
+ 
+ -- WHAT IS AVG BALAMNCE?
+  SELECT avg(BALANCE) AS AVERAGE_BALANCE  FROM ACCOUNT;
+  
+  -- WHICH CUS HAVE HIGHESTR BALANVCE
+  SELECT CUSTOMERID, BALANCE HIGHEST_BALANCE 
+  FROM ACCOUNT
+  ORDER BY BALANCE desc LIMIT 1;
+  
+ 
+ 
+
+
+
