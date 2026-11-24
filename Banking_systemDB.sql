@@ -376,6 +376,37 @@ SELECT BRANCHID,COUNT(ACCOUNTID) AS TOTAL_ACCOUNTS
  ORDER BY TOTAL_CUST DESC LIMIT 1;
  
  
+ -- which branch has highest total account balance
+ select branchid, sum(balance) as total_balance
+ from account
+ group by branchid
+ order by total_balance desc limit 1;
+ 
+ -- which branch handles most transaction
+ -- (without joins)
+ select accountid, count(transactionid) as total_transactions
+ from transactions
+ group by accountid
+ order by total_transactions desc limit 1;
+ 
+ select * 
+ from account
+ where accountid = 1003;
+ 
+ -- (with joins)
+ select branchname,count(transactionid) as total_transactions
+ from account as A
+ join branches as B
+on A.branchid = B.branchid
+join transactions as T
+on A.accountid = T.accountid
+group by B.branchname 
+order by total_transactions desc limit 1;
+
+
+-- 
+ 
+ 
  
  
  
