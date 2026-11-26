@@ -404,12 +404,247 @@ group by B.branchname
 order by total_transactions desc limit 1;
 
 
--- 
+--  which branch has  max loan exposure
+select B.branchid,B.branchname,sum(L.loanamount) as total_loan
+from branches as B
+inner join account as A
+on B.branchid= A.branchid
+inner join loans as L
+on A.customerid= L.customerid
+group by B.branchid,B.branchname
+order by total_loan desc limit 1;
+
+-- functions
+
+-- string functions
+-- concat() combines multiple strings
+select customerid, concat(FIRSTNAME, " ",LASTNAME) AS FULL_NAME
+FROM CUSTOMERS;
+
+-- UPPE()
+-- IT CONVERTS THE CASES INTO UPPER CASES
+select customerid, UPPER(CONCAT(FIRSTNAME, " ",LASTNAME)) AS FULL_NAME
+FROM CUSTOMERS;
+
+-- LOWER
+-- IT CONVERTS THE CASES INTO LOWER CASES
+select customerid, LOWER(CONCAT(FIRSTNAME, " ",LASTNAME)) AS FULL_NAME
+FROM CUSTOMERS;
+
+-- LENGTH
+-- FIND THE NUMBER OF LENGTHS
+SELECT FIRSTNAME, length(FIRSTNAME) AS NAMELENGTH
+FROM CUSTOMERS
+HAVING NAMELENGTH <= 5
+ORDER BY NAMELENGTH DESC LIMIT 1 OFFSET 1;
+
+-- CHAR_LENGTH()
+-- CALCULATE NMBER OF STRINGS
+SELECT FIRSTNAME, CHAR_length(FIRSTNAME) AS CHAR_LENGTHS
+FROM CUSTOMERS;
+
+-- LEFT()
+-- EXTRACTS THE DATA FROM LEFT
+SELECT FIRSTNAME, LEFT(FIRSTNAME,3) AS FIRST_3_LEFT
+FROM CUSTOMERS;
+
+-- RIGHT()
+-- EXTRACTS THE DATA FROM RIGHT
+SELECT PHONE, right(PHONE,4) AS LAST4
+FROM CUSTOMERS;
+
+--  DISPLAY MASKED ACCOUNTS
+SELECT CUSTOMERID, concat("XXXXXX",RIGHT(PHONE,4)) AS MASKED_PHONE
+FROM CUSTOMERS;
+
+-- SUBSTRING()
+-- IT EXTRACTS PORTION OF STRING
+SELECT EMAIL, substr(EMAIL,1,5) AS EMAIL_PART
+FROM CUSTOMERS;
+
+-- SUBSTRING_INDEX()
+SELECT EMAIL, SUBSTRING_INDEX(EMAIL,"@",1) AS EMAIL_PART
+FROM CUSTOMERS;
+
+-- TRIM
+-- REMOVES USELESS VALUES
+SELECT trim("VEENA KUTTY   ") AS NAME;
+
+-- REPLACE()
+-- REPLACES THE VAlues
+SELECT EMAIL, REPLACE(EMAIL, 'gmail.com','EMAIL.COM') AS EMAILS
+FROM CUSTOMERS;
+
+-- locate()
+-- finds position of character
+select email,locate("@",email) as position
+from customers;  
+
+-- math functions
+
+-- round()
+-- rounds off decimal valuers
+select accountid, balance,round(balance,0) as rounded_val
+from account;
  
- 
- 
- 
- 
+ -- ceil()/ceiling()
+ -- rounds up the values
+ select accountid, balance,ceil(balance) as roundup_val
+from account;
 
 
+-- floor()
+-- rounds down the values 12.75=12
+select accountid, balance,floor(balance) as floordown_val
+from account;
 
+
+-- abs()
+-- returns the absdolute values
+select abs(-8754) as abs_val;
+
+-- mod()
+-- returns remainder of the answer
+select accountid,  mod(accountid,2) as remainder
+from account;
+
+-- case of if-then just like if-else 
+select accountid,  mod(accountid,2) as remainder,case
+when mod(accountid,2)=0 then "even"
+else "odd"
+end as id_type
+from account;
+
+-- power()
+-- works like indices
+ select power(4,2) as result;
+ 
+ -- sqrt()
+ -- returns the square root of values
+ select balance,sqrt(balance) as sqrt_balance
+ from account;
+ 
+ -- greatest()
+ -- compares values
+ select accountid, balance, greatest(balance,25000) as minimum_balance
+ from account;
+ 
+ -- least()
+ -- compares val
+ select accountid, balance, least(balance,50000) as max_limit
+ from account;
+ 
+ -- annual intrest
+ select loadid,loanamount,intrestrate,round(loanamount*intrestrate/100,2) as intrest_amt
+ from loans;
+ 
+ -- loan + inrest_amount
+ select loadid,loanamount,intrestrate,round(loanamount+(loanamount*intrestrate/100),2) as principle_intrest
+ from loans;
+
+
+-- balance category
+select accountid, balance,
+case
+when balance is null then "unknown"
+when balance < 1000 then "low"
+when balance < 5000 then "medium"
+else "high"
+end as balance_category
+from account;
+
+-- DATE AND TIME FUNCTIONS
+
+SELECT CURDATE() AS TODAY;  -- TODAYS DATE
+SELECT sysdate() AS TODAY;  -- TODAYS DAYE WITH TIME
+
+-- YEAR()
+SELECT CUSTOMERID,BIRTHDATE, year(BIRTHDATE) AS BIRTH_YEAR
+FROM CUSTOMERS;
+
+-- MONTH()
+SELECT TRANSACTIONID, TRANSACTIONDATE, month(TRANSACTIONDATE) AS TRANSACTION_MONTH
+FROM TRANSACTIONS;
+
+
+ -- MONTHNAME()
+ SELECT TRANSACTIONID, TRANSACTIONDATE, monthNAME(TRANSACTIONDATE) AS TRANSACTION_MONTH_NAME
+FROM TRANSACTIONS;
+
+
+-- DAY ()
+SELECT TRANSACTIONID, TRANSACTIONDATE, DAY(TRANSACTIONDATE) AS TRANSACTION_DAY
+FROM TRANSACTIONS;
+ 
+-- DAYNAME()
+SELECT TRANSACTIONID, TRANSACTIONDATE, DAYNAME(TRANSACTIONDATE) AS TRANSACTION_DAY_NAME
+FROM TRANSACTIONS; 
+ 
+ -- QUARTER()
+ SELECT TRANSACTIONID, TRANSACTIONDATE, QUARTER(TRANSACTIONDATE) AS TRANSACTION_QUARTER
+FROM TRANSACTIONS;
+
+
+SELECT quarter(TRANSACTIONDATE) AS QUATERS, count(*) AS TRANSACTION_COUNT,
+SUM(AMOUNT) AS TOTAL_AMOUNT
+FROM TRANSACTIONS
+WHERE TRANSACTIONDATE IS NOT NULL
+GROUP BY QUARTER(TRANSACTIONDATE);
+
+-- DATEDIFF()
+SELECT LOADID,STARTDATE,ENDDATE, datediff(ENDDATE,STARTDATE) AS LOAN_DAYS
+FROM LOANS;
+ 
+-- CALCULATE THE LOAN DURARTION IN TERM OF YEARS
+SELECT LOADID,STARTDATE,ENDDATE, ROUND(datediff(ENDDATE,STARTDATE)/365,2) AS LOAN_YEARS
+FROM LOANS
+WHERE ENDDATE IS NOT NULL;
+
+-- TIMESTAMPDIFF()
+SELECT CUSTOMERID,FIRSTNAME,BIRTHDATE, TIMESTAMPDIFF(YEAR,BIRTHDAte,curdate()) AS AGE
+FROM CUSTOMERS;
+
+-- AGE GROUP
+SELECT CUSTOMERID,FIRSTNAME,BIRTHDATE, TIMESTAMPDIFF(YEAR,BIRTHDAte,curdate()) AS AGE,
+CASE 
+WHEN TIMESTAMPDIFF(YEAR,BIRTHDAte,curdate()) < 25 THEN "YOUNG"
+WHEN TIMESTAMPDIFF(YEAR,BIRTHDAte,curdate()) BETWEEN 25 AND 40 THEN "ADULT"
+ELSE "SENIOR"
+END AS AGE_GROPU
+FROM CUSTOMERS;
+
+-- DATE FORMAT
+select TRANSACTIONDATE, date_format(TRANSACTIONDATE,'%d-%m-%Y') AS FORMATED_DATE
+FROM TRANSACTIONS;
+
+select TRANSACTIONDATE, date_format(TRANSACTIONDATE,'%M-%Y') AS FORMATED_DATE
+FROM TRANSACTIONS;
+
+-- MONTHLY TRANSACTIONS
+SELECT 
+date_format(TRANSACTIONDATE,'%Y-%m') AS MONTH,
+count(*) AS TOTAL_COUNTS, 
+sum(AMOUNT) AS TOTAL_AMOUNTS
+FROM TRANSACTIONS
+WHERE TRANSACTIONDATE IS NOT NULL
+GROUP BY date_format(TRANSACTIONDATE,'%Y-%m') 
+ORDER BY MONTH;
+
+
+-- LAST 30 DAYS TRANSACTIONS
+SELECT * 
+FROM TRANSACTIONS
+WHERE TRANSACTIONDATE >= date_sub('2026-02-25',INTERVAL 30 DAY);
+
+-- ADDING TO THE DATE
+SELECT TRANSACTIONID, TRANSACTIONDATE,date_ADD(TRANSACTIONDATE,INTERVAL 30 DAY) AS AFTER_30_DAYS
+FROM TRANSACTIONS;
+
+-- LOAN STATUS USING DAYS
+SELECT LOADID,STARTDATE,ENDDATE,
+CASE
+WHEN ENDDATE IS NULL THEN "NO END DATE"
+WHEN ENDDATE<curdate() THEN "COMPLETED"
+ELSE "ACTIVE "
+END AS LOAN_STATUS
+FROM LOANS;
